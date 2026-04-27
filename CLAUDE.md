@@ -68,8 +68,23 @@ Intake → Knowledge Update → Expert Analysis → Synthesis → Output
 
 ## Conventions
 
-- Agent outputs go to `docs/expert-{agent-name}.md`
+- Agent outputs go to `docs/expert-{agent-name}.md` (or `projects/{slug}/output/expert-{agent-name}.md` for per-project pipelines)
 - Knowledge briefs go to `knowledge/{domain}-brief.md`
 - Pipeline state tracked in `docs/pipeline-state.md`
 - Human input needed is flagged with `[HUMAN-INPUT-NEEDED]`
 - All templates use `{placeholder}` syntax for variable substitution
+- **Skill-centric architecture for product runtime** — projects do NOT define local agents; they define `skills/` that group operational responsibilities by domain. The 6 generic agents in `agents/` are shared across all projects.
+- **Every project must include a bootstrap README** at `projects/{slug}/README.md` so any IA or human can self-deploy the environment (install GSD, configure MCPs, register agents/skills, set env vars). Use `templates/project-bootstrap.md` as the starting point.
+
+## Per-Project Structure
+
+```
+projects/{slug}/
+├── README.md                ← bootstrap guide (mandatory)
+├── skills/                  ← product-specific operational skills
+│   ├── README.md            ← skills index + migration map
+│   └── {skill-name}.md
+└── output/                  ← pipeline artifacts (intake, briefs, expert-*, project-definition)
+```
+
+When creating a new project, copy `templates/project-bootstrap.md` to `projects/{slug}/README.md` and fill in the placeholders.

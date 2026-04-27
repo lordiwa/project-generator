@@ -8,10 +8,10 @@ description: Core orchestration logic for the project generator pipeline. Define
 ## Pipeline Stages
 
 ```
-┌─────────┐   ┌──────────────┐   ┌─────────────┐   ┌────────────┐   ┌──────────┐
-│  Intake  │──▶│   Knowledge  │──▶│   Expert     │──▶│  Structure │──▶│  Output  │
-│          │   │   Update     │   │   Analysis   │   │  & Synth   │   │          │
-└─────────┘   └──────────────┘   └─────────────┘   └────────────┘   └──────────┘
+┌────────┐  ┌──────────┐  ┌─────────┐  ┌───────────┐  ┌────────┐  ┌────────────┐
+│ Intake │─▶│Knowledge │─▶│ Expert  │─▶│Structure &│─▶│ Output │─▶│ Bootstrap  │
+│        │  │  Update  │  │Analysis │  │ Synthesis │  │        │  │  Package   │
+└────────┘  └──────────┘  └─────────┘  └───────────┘  └────────┘  └────────────┘
 ```
 
 ### Stage 1: Intake
@@ -93,6 +93,37 @@ description: Core orchestration logic for the project generator pipeline. Define
 - `docs/security.md` — Security assessment and requirements
 - `docs/project-plan.md` — Detailed project plan with estimates
 
+### Stage 6: Bootstrap Package (mandatory for all scales)
+
+**Trigger**: After Stage 5 outputs are written.
+
+**Purpose**: Make the project self-deployable. Any IA or human entering `projects/{slug}/` must be able to install dependencies, configure MCPs, register agents/skills, and start working without external context.
+
+**Actions**:
+1. Copy `templates/project-bootstrap.md` to `projects/{slug}/README.md`.
+2. Replace placeholders with project-specific values:
+   - `{PROJECT_NAME}`, `{slug}`, `{PRODUCT_ONE_LINER}`
+   - `{TECH_STACK}` (derived from `expert-architect.md`)
+   - `{COMPLIANCE_REQUIREMENTS}` (derived from `expert-security-compliance.md`)
+   - MCP list (derived from tech stack and skills)
+   - `{ENV_VAR_*}` (derived from `expert-architect.md` integrations)
+   - `{STACK_CLI}` (firebase, supabase, etc.)
+3. Identify operational skills that should live in `projects/{slug}/skills/` based on the expert outputs:
+   - Look for clusters of operational responsibilities in `expert-product-ux.md` (user journeys), `expert-business-analyst.md` (operational use cases), and `expert-security-compliance.md` (audit/reporting).
+   - Group them by cohesive operational domain — never one-skill-per-role. If you propose >6 skills, you are over-fragmenting; consolidate.
+   - Generate `projects/{slug}/skills/{skill}.md` files following the format of existing skills (frontmatter + when to invoke + responsibilities + workflow + integrations + outputs).
+   - Generate `projects/{slug}/skills/README.md` with the skills index.
+4. Verify the bootstrap by walking the README's checklist (Section 5) end-to-end on a clean checkout.
+
+**Output**:
+- `projects/{slug}/README.md` (bootstrap guide, mandatory)
+- `projects/{slug}/skills/*.md` (operational skills, project-specific)
+- `projects/{slug}/skills/README.md` (skills index)
+
+**Rule**: this stage is **never skipped**, even for `light` scale projects. A research-only project still gets a minimal README pointing to the brief and saying "no skills needed — read-only output."
+
+**Rationale**: skill-centric architecture means projects do not redefine the 6 generic agents in `agents/`. They define skills that group operational responsibilities by domain. The bootstrap README is the entry point that ties agents + skills + MCPs + env into a self-deploying package.
+
 ## Human Expert Integration
 
 At any stage, the pipeline can:
@@ -108,11 +139,14 @@ Track pipeline progress in `docs/pipeline-state.md`:
 - **Project**: [name]
 - **Type**: [software|research|analysis|planning]
 - **Scale**: [light|medium|full]
-- **Current Stage**: [1-5]
+- **Current Stage**: [1-6]
 - **Stage Status**:
   - Intake: [pending|complete]
   - Knowledge Update: [pending|in-progress|complete]
   - Expert Analysis: [pending|in-progress|complete]
   - Synthesis: [pending|in-progress|complete]
   - Output: [pending|complete]
+  - Bootstrap Package: [pending|complete]   ← README + skills/ + skills/README.md
 ```
+
+A project is **not considered done** until Stage 6 is complete. The pipeline finishes only when `projects/{slug}/README.md` exists, all placeholders are filled, and the post-bootstrap checklist passes on a clean checkout.

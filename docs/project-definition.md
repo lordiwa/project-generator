@@ -181,54 +181,44 @@ Decisions required from the founder/team before proceeding:
 
 ---
 
-## 10. Suggested AI Agents
+## 10. Operational Skills (Skill-Centric Architecture)
 
-### Agent 1: Contenido GG -- Spanish Gaming+Wellness Content Creator
-**Description**: Generates bilingual (ES-primary, EN-secondary) wellness content themed around gaming culture for TikTok scripts, YouTube video outlines, Instagram captions, blog articles, and Discord announcements.
-**What it does**: Produces weekly content calendars; writes articles using gaming metaphors (HP = health, Stamina = fitness); adapts content per game cluster (Free Fire, Valorant, Minecraft); generates SEO-optimized blog posts in LATAM Spanish.
-**Tools needed**: Claude API, web search (trending gaming topics), YouTube/TikTok trend APIs, content CMS integration, Canva API for visual templates.
+The operational layer is organized as **4 combined skills** (not granular agents) that live in `projects/gamer-alliance/skills/`. Each skill groups responsibilities by cohesive operational domain rather than by narrow role. The 6 generic agents in `agents/` (business-analyst, architect, product-ux, project-manager, research-analyst, security-compliance) cover the design/analysis pipeline; these skills cover product runtime.
 
-### Agent 2: Guardian Bot -- Community Moderator & Crisis Detector
-**Description**: Monitors Discord channels and app community interactions for toxicity, harassment, self-harm keywords, and crisis indicators. Escalates to human moderators.
-**What it does**: Real-time keyword + sentiment analysis on Discord messages; flags crisis-related content; auto-surfaces mental health resources; detects gender-based harassment patterns; generates daily moderation reports; tracks moderator burnout (workload distribution).
-**Tools needed**: Discord API (read-only), NLP/sentiment analysis model, crisis keyword database (ES/EN), moderator notification system, audit logging.
+See `projects/gamer-alliance/skills/README.md` for the full migration map.
 
-### Agent 3: Compliance Watcher -- Data Privacy & LOPDP Auditor
-**Description**: Continuously audits consent records, data processing activities, and B2B data exports for LOPDP compliance. Flags violations before they become fines.
-**What it does**: Verifies every data access has active consent; audits B2B exports for k-anonymity compliance; checks consent expiry dates and triggers re-consent; monitors for data collected without proper consent grants; generates monthly compliance reports for DPO; flags small cohorts at risk of re-identification.
-**Tools needed**: Supabase DB read access, consent ledger API, B2B export audit logs, report generation, DPO notification system.
+### Skill 1: Community Ops (`skills/community-ops.md`)
+**Domain**: End-to-end member lifecycle and community leadership.
+**What it covers**:
+- Onboarding funnel (Discord → first event → app → first challenge → retention) with target metrics (30% Discord-to-event in 30 days, 60% event-to-app, 80% consent grant, 50% 30-day retention).
+- Three-tier event logistics (Meetups, General Events, Club Sessions) across Guayaquil, Quito and Cuenca with Kubox/parks venues, QR check-in, RSVP, post-event NPS and XP distribution.
+- Club Captain coaching: training modules (crisis recognition, de-escalation, harassment response, event organization, community building, self-care), burnout detection signals, rotation and recovery protocols.
+**Tools needed**: Discord bot API, push notifications, PostHog (funnel analytics), QR code generator, calendar/scheduling, WhatsApp Business API, weather API, training content library, community health dashboard.
 
-### Agent 4: Event Planner -- Meetup & General Event Logistics Manager
-**Description**: Plans, schedules, and manages logistics for the three-tier event system (Meetups, General Events, Club Sessions) across Ecuador cities.
-**What it does**: Generates event proposals based on community interest and seasonal patterns; coordinates with venue partners; creates promotional materials; manages RSVP lists and capacity; generates QR codes; sends WhatsApp/Discord reminders; compiles post-event analytics (attendance, NPS, XP distributed).
-**Tools needed**: Calendar/scheduling API, venue database, WhatsApp Business API, QR code generator, weather API (for outdoor events), Canva API, event analytics dashboard.
+### Skill 2: Content Engine (`skills/content-engine.md`)
+**Domain**: Bilingual content creation, organic discovery and regional localization.
+**What it covers**:
+- Weekly content calendars across TikTok, YouTube, Instagram, blog, Discord using 5 pillars (Movimiento, Mente, Nutrición, Comunidad, Data/Insights), gaming-native voice (XP/GG/buff stay in English, "tú" universal LATAM).
+- SEO/SEM and platform-algorithm optimization following the Nerd Fitness model (405K+ backlinks, $0 ad spend); keyword research, link-building outreach, ranking tracking.
+- ES/EN translation with gaming glossary, regional adaptation (Ecuador/Colombia/México/Perú variants, currency, crisis lines) and legally precise consent/LOPDP terminology.
+**Tools needed**: Claude API, web search, YouTube/TikTok trend APIs, SEO tools (Ahrefs/Semrush), Google Search Console, translation memory + glossary, content CMS, Canva API.
 
-### Agent 5: Desafio Master -- Wellness Challenge Designer
-**Description**: Creates gamified wellness challenges that blend gaming culture with physical/mental health goals, calibrated to three difficulty tiers.
-**What it does**: Designs weekly/monthly challenges with gaming-themed narratives (e.g., "Recorre la distancia del mapa de Summoner's Rift en una semana"); sets Bronce/Plata/Oro tier targets based on community baseline data; creates challenge copy in LATAM Spanish; tracks completion rates and adjusts future difficulty; identifies which game clusters respond best to which challenge types.
-**Tools needed**: Community engagement data API, wearable aggregate data, gamification engine (gengine) API, content generation, analytics dashboard.
+### Skill 3: Trust & Safety (`skills/trust-safety.md`)
+**Domain**: Real-time moderation, LOPDP compliance auditing, B2B reporting with k-anonymity.
+**What it covers**:
+- Discord/app moderation: toxicity, harassment, gender-based abuse, crisis keyword detection (ES/EN), 4-tier escalation (Low → Critical), automatic crisis resource surfacing (Línea 171, Crisis Text Line), moderator workload tracking.
+- Monthly LOPDP compliance audit (10-point checklist): consent validity, k≥50 on B2B exports, consent revocations within SLA, data subject requests within 15 days, Discord-bot-zero-data audit, encryption verification, audit log integrity.
+- B2B partner dashboards (Metabase) and PDF reports with pre-built segments (Active Movers, Social Connectors, Competitive Core, New Recruits, At Risk), compliance badge on every export, k≥50 hard gate.
+**Tools needed**: Discord API (read-only), NLP/sentiment analysis, crisis keyword DB, audit logging, Firestore read access, consent ledger API, k-anonymity validator, Metabase API, PDF generation, DPO notification system.
 
-### Agent 6: Partner Pulse -- B2B Report & Dashboard Generator
-**Description**: Creates and maintains B2B partner dashboards, generates automated reports, and surfaces audience insights for sponsors and B2B clients.
-**What it does**: Builds Metabase dashboard configurations per partner access scope; generates weekly/monthly PDF reports with audience metrics; highlights campaign performance; suggests new activation opportunities based on audience data; ensures all reports pass k-anonymity checks before delivery.
-**Tools needed**: Metabase API, Supabase analytics queries, PDF generation, partner CRM data, consent verification API, email delivery (Resend).
+### Skill 4: Challenge Framework (`skills/challenge-framework.md`)
+**Domain**: Gamified wellness challenge design (stand-alone, no fusion).
+**What it covers**:
+- Five challenge types (Movement, Streak, Social, Mental, Hybrid) with three-tier calibration (Bronce/Plata/Oro) anchored on community baseline data.
+- Gaming-native narrative ("Caminaste 4.2km — equivalente a cruzar Summoner's Rift 47 veces"), seasonal battle-pass progression, anti-cheat rules for unrealistic data.
+- Anti-patterns enforcement: no fake gamification, no pay-to-win XP, no shaming for non-completion.
+**Tools needed**: Community engagement data API, wearable aggregate data, gamification engine, content generation, analytics dashboard.
 
-### Agent 7: Growth Hacker -- SEO & Organic Discovery Optimizer
-**Description**: Optimizes content and platform presence for organic discovery across search engines, TikTok, YouTube, and Instagram in Spanish-language markets.
-**What it does**: Conducts keyword research for gaming+wellness terms in LATAM Spanish; optimizes blog post meta tags, titles, and structure; analyzes TikTok/YouTube algorithm patterns; tracks search rankings; identifies trending gaming+wellness topics for content calendar; generates link-building outreach templates following the Nerd Fitness model (405K+ backlinks, zero ad spend).
-**Tools needed**: SEO tools API (Ahrefs/Semrush), Google Search Console, YouTube Analytics API, TikTok analytics, web scraping for trend detection, content CMS.
+### Why skills, not agents
 
-### Agent 8: Traductor GG -- Context-Aware ES/EN Translation Agent
-**Description**: Handles all translation needs between Spanish and English with gaming culture context awareness. Not a generic translator -- understands gaming terminology, LATAM Spanish regional variants, and wellness vocabulary.
-**What it does**: Translates app UI strings, consent texts, legal documents, content articles, and marketing materials; maintains a gaming+wellness glossary (ES/EN); adapts content for Colombia/Mexico/Peru dialectal differences during LATAM expansion; preserves gaming slang and cultural references; ensures legal/consent texts are accurate across jurisdictions.
-**Tools needed**: Claude API, translation memory database, glossary management, content CMS integration, legal terminology reference.
-
-### Agent 9: Club Coach -- Community Leader Support & Training Agent
-**Description**: Supports Club Captains and community moderators with training, resources, and operational guidance. Prevents volunteer burnout.
-**What it does**: Delivers modular training on: crisis recognition, de-escalation, harassment response, event organization, and community engagement; monitors leader activity levels and flags burnout risk; generates weekly leader briefings; provides templates for club communications; tracks club health metrics (attendance trends, member retention).
-**Tools needed**: Training content library, community analytics API, notification system, club management dashboard, moderator workload tracker.
-
-### Agent 10: Onboarding Wizard -- New Member Activation Agent
-**Description**: Guides new members from Discord join through app registration, first event attendance, and first challenge completion. Optimizes the critical Discord-to-App conversion funnel.
-**What it does**: Sends personalized welcome sequences via Discord DM and app notifications; recommends first events based on city and game preferences; nudges toward app registration after first value moment; tracks individual funnel progress; identifies drop-off patterns and A/B tests messaging variants; re-engages dormant users with targeted invitations.
-**Tools needed**: Discord bot API, push notification system, user analytics (PostHog), A/B testing framework, event recommendation engine, user profile data.
+The previous design proposed 10 granular agents (one per role). They created two problems: redundancy with the 6 generic pipeline agents (e.g., compliance-watcher vs `agents/security-compliance.md`), and forced coordination overhead for tasks that are naturally integrated (e.g., content creation + SEO optimization + regional translation are sequential steps on every piece). Grouping by operational domain reduces friction and produces a smaller, clearer surface to maintain.
